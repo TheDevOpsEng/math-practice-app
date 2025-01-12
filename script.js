@@ -77,17 +77,22 @@ function updateDisplay() {
 function checkAnswer() {
   const emoji = document.getElementById('emoji');
   const resultMessage = document.getElementById('user-input');
+  const audio = new Audio(); // Create a new Audio object
 
   if (parseInt(userInput) === currentQuestion.answer) {
     score++;
     resultMessage.textContent = 'Correct!';
     resultMessage.style.color = 'green';
     emoji.textContent = '😄'; // Happy emoji
+    audio.src = './sounds/right.wav'; // Path to correct answer sound
   } else {
     resultMessage.textContent = 'Wrong!';
     resultMessage.style.color = 'red';
     emoji.textContent = '😢'; // Sad emoji
+    audio.src = './sounds/wrong.wav'; // Path to wrong answer sound
   }
+
+  audio.play().catch(error => console.error("Audio playback error:", error)); // Play the sound and handle errors
 
   saveProgress(); // Save progress after each answer
   setTimeout(() => {
