@@ -1,128 +1,297 @@
-let score = 0;
-let totalQuestions = 10;
-let questionCount = 1;
-let level = 1; // Default starting level
-let currentQuestion = {};
-let userInput = "";
-let selectedOperators = ['+', '-']; // Start with basic operators
-
-// Save progress
-function saveProgress() {
-  const progressData = {
-    score,
-    level,
-    questionCount,
-  };
-  localStorage.setItem('mathAppProgress', JSON.stringify(progressData));
+/* General Styles */
+body {
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #f4f4f9, #dceefb);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden; /* Prevent scrolling */
 }
 
-// Load progress
-function loadProgress() {
-  const savedProgress = localStorage.getItem('mathAppProgress');
-  if (savedProgress) {
-    const progressData = JSON.parse(savedProgress);
-    score = progressData.score;
-    level = progressData.level;
-    questionCount = progressData.questionCount;
-    updateScore();
-  } else {
-    resetProgress();
+.app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 15px;
+  max-width: 400px;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Allow scrolling inside the app if necessary */
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 60px; /* Slightly increased logo size */
+  height: auto;
+}
+
+h1 {
+  font-size: 26px;
+  color: #4c4c6d;
+}
+
+/* Question Display */
+.question-display {
+  text-align: center;
+  padding: 15px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #4c4c6d;
+  background-color: #e8f0ff;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.emoji {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+/* Score and Progress */
+.score-info {
+  text-align: center;
+  font-size: 14px;
+  color: #4c4c6d;
+  margin-bottom: 15px;
+}
+
+.progress-bar {
+  width: 100%;
+  background: #e0e0e0;
+  border-radius: 8px;
+  height: 8px;
+  margin: 5px 0;
+}
+
+.progress {
+  height: 8px;
+  background: linear-gradient(to right, #6c63ff, #42a5f5);
+  border-radius: 8px;
+  transition: width 0.3s ease;
+}
+
+/* Keypad */
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.key, .submit-btn {
+  background: #6a85e5;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 18px; /* Increased button padding slightly */
+  font-size: 22px; /* Increased font size for numbers */
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.key:hover, .submit-btn:hover {
+  background: #3e3be3;
+  transform: scale(1.05);
+}
+
+.key:active, .submit-btn:active {
+  background: #2d2aa7;
+  transform: scale(0.95);
+}
+
+.submit-btn {
+  grid-column: span 3;
+  padding: 20px; /* Slightly larger Submit button */
+  font-size: 22px; /* Match the font size to keys */
+}
+
+/* Tab Navigation */
+.tab-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #6a85e5;
+  padding: 10px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 20px;
+  transition: background 0.3s ease;
+}
+
+.tab-btn:hover, .tab-btn:focus {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+/* Hidden Tabs */
+.hidden {
+  display: none;
+}
+
+/* Settings Panel */
+.settings-panel {
+  padding: 20px;
+  background: #f9f9ff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.settings-section {
+  margin-bottom: 20px;
+}
+
+.settings-section h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #4c4c6d;
+  font-weight: bold;
+}
+
+.settings-section label {
+  font-size: 16px;
+  color: #4c4c6d;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.settings-btn {
+  display: block;
+  width: 100%;
+  background: #6c63ff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.settings-btn:hover {
+  background: #5348c7;
+}
+
+/* Toggle Switch for Sound */
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.toggle input {
+  display: none;
+}
+
+.slider {
+  width: 40px;
+  height: 20px;
+  background: #ccc;
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s;
+}
+
+.toggle input:checked + .slider {
+  background: #6c63ff;
+}
+
+.toggle input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+.label-text {
+  font-size: 16px;
+  color: #4c4c6d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app {
+    width: 95%;
+    padding: 10px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .keypad {
+    gap: 10px;
+  }
+
+  .key, .submit-btn {
+    padding: 16px; /* Adjusted size for mobile */
+    font-size: 20px;
+  }
+
+  .score-info {
+    font-size: 12px;
+  }
+
+  .tab-btn {
+    font-size: 14px;
+    padding: 8px 16px;
   }
 }
 
-// Reset progress
-function resetProgress() {
-  score = 0;
-  level = 1;
-  questionCount = 1;
-  selectedOperators = ['+', '-'];
-  localStorage.removeItem('mathAppProgress');
-  alert('Progress has been reset!');
-  updateScore();
-  generateQuestion();
-}
-
-// Apply settings
-function applySettings() {
-  const levelSelect = document.getElementById('level-select');
-  level = parseInt(levelSelect.value);
-
-  selectedOperators = [];
-  if (document.getElementById('addition').checked) selectedOperators.push('+');
-  if (document.getElementById('subtraction').checked) selectedOperators.push('-');
-  if (document.getElementById('multiplication').checked) selectedOperators.push('x');
-  if (document.getElementById('division').checked) selectedOperators.push('÷');
-
-  alert(`Settings applied! Starting from Level ${level}.`);
-  generateQuestion();
-}
-
-// Generate question based on the selected level
-function generateQuestion() {
-  let num1, num2, operator, answer;
-
-  switch (level) {
-    case 1: // Basic Level
-      num1 = getRandomInt(1, 10);
-      num2 = getRandomInt(1, 10);
-      operator = getRandomOperator(['+', '-']);
-      break;
-
-    case 2: // Intermediate Level
-      num1 = getRandomInt(10, 20);
-      num2 = getRandomInt(10, 20);
-      operator = getRandomOperator(['+', '-', 'x']);
-      break;
-
-    case 3: // Advanced Level
-      num1 = getRandomInt(20, 50);
-      num2 = getRandomInt(1, 10);
-      operator = getRandomOperator(['+', '-', 'x', '÷']);
-      break;
+@media (max-width: 480px) {
+  .logo {
+    width: 70px;
   }
 
-  if (operator === '÷') {
-    num1 = num2 * getRandomInt(1, 10); // Ensure division works cleanly
+  .question-display {
+    font-size: 18px;
+    padding: 10px;
   }
 
-  answer = calculateAnswer(num1, num2, operator);
-  currentQuestion = { num1, num2, operator, answer };
-  displayQuestion();
-}
-
-// Display the question
-function displayQuestion() {
-  document.getElementById('question').textContent = `${currentQuestion.num1} ${currentQuestion.operator} ${currentQuestion.num2}`;
-  userInput = "";
-  updateDisplay();
-}
-
-// Utility functions
-function calculateAnswer(num1, num2, operator) {
-  switch (operator) {
-    case '+': return num1 + num2;
-    case '-': return num1 - num2;
-    case 'x': return num1 * num2;
-    case '÷': return Math.floor(num1 / num2);
+  .key, .submit-btn {
+    padding: 14px;
+    font-size: 18px;
   }
 }
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function getRandomOperator(operators) {
-  return operators[Math.floor(Math.random() * operators.length)];
-}
-
-function updateDisplay() {
-  const display = document.getElementById('user-input');
-  display.textContent = userInput || "_";
-}
-
-// Event listeners
-document.getElementById('submit-answer').addEventListener('click', checkAnswer);
-
-// Initialize
-loadProgress();
-generateQuestion();
