@@ -1,66 +1,23 @@
 let score = 0;
-let totalQuestions = 355;
+let totalQuestions = 10; // Number of questions per level
 let questionCount = 1;
+let level = 1; // Start from level 1
 let currentQuestion = {};
 let userInput = "";
 let selectedOperators = ['+', '-', 'x', '÷']; // Default: All operators enabled
 
-// Save progress to localStorage
-function saveProgress() {
-  const progress = {
-    score,
-    questionCount,
-    selectedOperators,
-  };
-  localStorage.setItem('mathAppProgress', JSON.stringify(progress));
-}
-
-// Load progress from localStorage
-function loadProgress() {
-  const savedProgress = localStorage.getItem('mathAppProgress');
-  if (savedProgress) {
-    const { score: savedScore, questionCount: savedQuestionCount, selectedOperators: savedOperators } = JSON.parse(savedProgress);
-    score = savedScore;
-    questionCount = savedQuestionCount;
-    selectedOperators = savedOperators;
-
-    updateScore();
-    generateQuestion();
-  } else {
-    generateQuestion();
-  }
-}
-
-// Apply settings and save them to localStorage
-function applySettings() {
-  selectedOperators = [];
-  if (document.getElementById('addition').checked) selectedOperators.push('+');
-  if (document.getElementById('subtraction').checked) selectedOperators.push('-');
-  if (document.getElementById('multiplication').checked) selectedOperators.push('x');
-  if (document.getElementById('division').checked) selectedOperators.push('÷');
-
-  saveProgress(); // Save updated settings
-  alert('Settings applied!');
-  toggleSettings();
-}
-
 // Generate a random question
 function generateQuestion() {
-  if (selectedOperators.length === 0) {
-    alert('Please select at least one operation in the settings!');
-    return;
-  }
-
   const operator = selectedOperators[Math.floor(Math.random() * selectedOperators.length)];
   let num1, num2, answer;
 
   if (operator === '÷') {
-    num2 = Math.floor(Math.random() * 9) + 1;
+    num2 = Math.floor(Math.random() * 9) + 1; // Avoid division by zero
     answer = Math.floor(Math.random() * 9) + 1;
-    num1 = num2 * answer;
+    num1 = num2 * answer; // Ensure num1 is divisible by num2
   } else {
-    num1 = Math.floor(Math.random() * 10) + 1;
-    num2 = Math.floor(Math.random() * 10) + 1;
+    num1 = Math.floor(Math.random() * 10 * level) + 1; // Increase number range with level
+    num2 = Math.floor(Math.random() * 10 * level) + 1;
 
     switch (operator) {
       case '+': answer = num1 + num2; break;
@@ -81,31 +38,85 @@ function updateDisplay() {
   display.textContent = userInput || "_";
 }
 
-// Check if the user's answer is correct
+// Check the user's answer
 function checkAnswer() {
+  const emoji = document.getElementById('emoji'); // Replace the image with emoji
+  const audio = new Audio();
+  const resultMessage = document.getElementById('user-input');
+
   if (parseInt(userInput) === currentQuestion.answer) {
     score++;
-    document.getElementById('user-input').textContent = 'Correct!';
-    document.getElementById('user-input').style.color = 'green';
-    setTimeout(nextQuestion, 1000);
+    resultMessage.textContent = 'Correct!';
+    resultMessage.style.color = 'green';
+    emoji.textContent = '😄'; // Happy emoji
+    audio.src = './reactions/right.wav'; // Play "right" sound
   } else {
-    document.getElementById('user-input').textContent = 'Wrong!';
-    document.getElementById('user-input').style.color = 'red';
+    resultMessage.textContent = 'Wrong!';
+    resultMessage.style.color = 'red';
+    emoji.textContent = '😢'; // Sad emoji
+    audio.src = './reactions/wrong.wav'; // Play "wrong" sound
   }
+
+  audio.play(); // Play the selected sound
+  setTimeout(() => {
+    nextQuestion();
+  }, 2000);
 }
 
 // Move to the next question
 function nextQuestion() {
-  questionCount++;
-  saveProgress(); // Save progress after moving to the next question
+  if (questionCount >= totalQuestions) {
+    levelUp();
+  } else {
+    questionCount++;
+    generateQuestion();
+    updateScore();
+    document.getElementById('emoji').textContent = '🙂'; // Reset to neutral face
+  }
+}
+
+// Level up
+function levelUp() {
+  level++;
+  questionCount = 1; // Reset question count
+  alert(`Great job! You've advanced to Level ${level}!`);
   generateQuestion();
   updateScore();
 }
 
 // Update the score display
 function updateScore() {
-  document.getElementById('progress').textContent = `${questionCount} of ${totalQuestions}`;
-  document.getElementById('score').textContent = `Score: ${score}/${questionCount}`;
+  document.getElementById('progress').textContent = `Level ${level} | Question ${questionCount} of ${totalQuestions}`;
+  document.getElementById('score').textContent = `Score: ${score}`;
+}
+
+// Toggle the settings panel
+function toggleSettings() {
+  const panel = document.getElementById('settings-panel');
+  panel.classList.toggle('hidden'); // Show or hide the settings panel
+}
+
+// Apply settings (update selected operators)
+function applySettings() {
+  selectedOperators = [];
+  if (document.getElementById('addition').checked) selectedOperators.push('+');
+  if (document.getElementById('subtraction').checked) selectedOperators.push('-');
+  if (document.getElementById('multiplication').checked) selectedOperators.push('x');
+  if (document.getElementById('division').checked) selectedOperators.push('÷');
+
+  alert('Settings updated!'); // Notify the user
+  toggleSettings(); // Close the settings panel
+}
+
+// Reset progress
+function resetProgress() {
+  score = 0;
+  questionCount = 1;
+  level = 1;
+  alert('Progress has been reset!');
+  updateScore();
+  generateQuestion();
+  document.getElementById('emoji').textContent = '🙂'; // Reset to neutral face
 }
 
 // Handle keypad button clicks
@@ -113,10 +124,10 @@ document.querySelectorAll('.key').forEach(key => {
   key.addEventListener('click', function () {
     const value = this.textContent;
 
-    if (value === '⌫') { // Handle delete key
-      userInput = userInput.slice(0, -1); // Remove last character
+    if (value === '⌫') {
+      userInput = userInput.slice(0, -1); // Remove the last character
     } else {
-      userInput += value; // Append the key value
+      userInput += value; // Append the clicked value
     }
 
     updateDisplay();
@@ -126,17 +137,5 @@ document.querySelectorAll('.key').forEach(key => {
 // Add event listener for the Submit Answer button
 document.getElementById('submit-answer').addEventListener('click', checkAnswer);
 
-// Reset progress by clearing localStorage and reloading the page
-function resetProgress() {
-  localStorage.removeItem('mathAppProgress');
-  location.reload();
-}
-
-// Toggle Settings Panel
-function toggleSettings() {
-  const panel = document.getElementById('settings-panel');
-  panel.classList.toggle('hidden');
-}
-
-// Load progress on page load
-window.onload = loadProgress;
+// Start the game
+generateQuestion();
