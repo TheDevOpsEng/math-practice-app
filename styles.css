@@ -7,7 +7,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden;
+  overflow: hidden; /* Prevent scrolling */
 }
 
 .app {
@@ -21,7 +21,7 @@ body {
   background: #ffffff;
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
+  overflow-y: auto; /* Allow scrolling inside the app if necessary */
 }
 
 /* Header */
@@ -29,17 +29,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
 .logo {
-  width: 80px; /* Doubled the logo size */
+  width: 60px; /* Slightly increased logo size */
   height: auto;
 }
 
 h1 {
-  font-size: 24px;
+  font-size: 26px;
   color: #4c4c6d;
 }
 
@@ -57,7 +57,7 @@ h1 {
 }
 
 .emoji {
-  font-size: 36px;
+  font-size: 40px;
   margin-bottom: 10px;
 }
 
@@ -88,7 +88,7 @@ h1 {
 .keypad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  gap: 12px;
   margin-bottom: 15px;
 }
 
@@ -97,8 +97,8 @@ h1 {
   color: white;
   border: none;
   border-radius: 50%;
-  padding: 18px; /* Increased button padding for larger size */
-  font-size: 20px; /* Increased font size for numbers on buttons */
+  padding: 18px; /* Increased button padding slightly */
+  font-size: 22px; /* Increased font size for numbers */
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -118,7 +118,8 @@ h1 {
 
 .submit-btn {
   grid-column: span 3;
-  padding: 20px; /* Increased size of the Submit button */
+  padding: 20px; /* Slightly larger Submit button */
+  font-size: 22px; /* Match the font size to keys */
 }
 
 /* Tab Navigation */
@@ -257,16 +258,16 @@ h1 {
   }
 
   h1 {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .keypad {
-    gap: 12px; /* Slightly smaller gap on mobile */
+    gap: 10px;
   }
 
   .key, .submit-btn {
-    padding: 16px; /* Slightly smaller button padding for mobile */
-    font-size: 18px; /* Adjusted font size */
+    padding: 16px; /* Adjusted size for mobile */
+    font-size: 20px;
   }
 
   .score-info {
@@ -281,7 +282,7 @@ h1 {
 
 @media (max-width: 480px) {
   .logo {
-    width: 70px; /* Slightly smaller logo on very small screens */
+    width: 70px;
   }
 
   .question-display {
@@ -291,6 +292,6 @@ h1 {
 
   .key, .submit-btn {
     padding: 14px;
-    font-size: 16px;
+    font-size: 18px;
   }
 }
