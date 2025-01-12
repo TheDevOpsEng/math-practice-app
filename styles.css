@@ -1,0 +1,145 @@
+/* Global Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .app {
+    width: 400px;
+    background: #ffffff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding-bottom: 15px;
+  }
+  
+  /* Header */
+  header {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px;
+    background-color: #6c63ff;
+    color: white;
+  }
+  
+  .nav-btn {
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .nav-btn:hover {
+    text-decoration: underline;
+  }
+  
+  /* Settings Panel */
+  #settings-panel {
+    background: #eef2ff;
+    padding: 20px;
+    margin: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  #settings-panel h3 {
+    margin: 0 0 10px;
+    color: #4c4c6d;
+    font-size: 18px;
+  }
+  
+  label {
+    font-size: 16px;
+    color: #4c4c6d;
+  }
+  
+  .apply-btn {
+    background: #6c63ff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  .apply-btn:hover {
+    background: #5348c7;
+  }
+  
+  /* Question Display */
+  .question-display {
+    text-align: center;
+    padding: 30px;
+    font-size: 26px;
+    font-weight: 500;
+    color: #4c4c6d;
+    background-color: #eef2ff;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  #user-input {
+    margin-top: 10px;
+    font-size: 22px;
+    color: #6c63ff;
+    font-weight: bold;
+  }
+  
+  /* Score Info */
+  .score-info {
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    font-weight: bold;
+    font-size: 16px;
+    color: #4c4c6d;
+    background-color: #fafafa;
+  }
+  
+  /* Keypad */
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 20px;
+  }
+  
+  .key, .submit-btn {
+    background: #6c63ff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: background 0.2s ease;
+  }
+  
+  .key:hover, .submit-btn:hover {
+    background: #5348c7;
+  }
+  
+  .key:active, .submit-btn:active {
+    background: #3d3495;
+  }
+  
+  .submit-btn {
+    grid-column: span 3;
+    margin-top: 10px;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
