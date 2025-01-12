@@ -3,7 +3,7 @@ body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f9;
+  background: linear-gradient(135deg, #f4f4f9, #dceefb);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,22 +23,25 @@ body {
 header {
   display: flex;
   justify-content: space-around;
+  align-items: center;
   padding: 10px;
-  background-color: #6c63ff;
+  background: linear-gradient(45deg, #6a85e5, #3e3be3);
   color: white;
 }
 
 .nav-btn {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
   font-size: 16px;
-  font-weight: 500;
   color: white;
   cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .nav-btn:hover {
-  text-decoration: underline;
+  background: rgba(255, 255, 255, 0.4);
 }
 
 /* Settings Panel */
@@ -80,36 +83,60 @@ label {
 .question-display {
   text-align: center;
   padding: 30px;
-  font-size: 26px;
-  font-weight: 500;
-  color: #4c4c6d;
-  background-color: #eef2ff;
-  border-bottom: 1px solid #ddd;
-}
-
-#user-input {
-  margin-top: 10px;
-  font-size: 22px;
-  color: #6c63ff;
+  font-size: 28px;
   font-weight: bold;
+  color: #4c4c6d;
+  background-color: #e8f0ff;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Emoji Feedback */
 .emoji {
-  font-size: 60px;
+  font-size: 80px;
   text-align: center;
   margin: 10px 0;
+  animation: bounce 0.5s ease;
 }
 
-/* Score Info */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Score and Progress */
 .score-info {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
   padding: 10px 20px;
   font-size: 16px;
   font-weight: bold;
   color: #4c4c6d;
   background-color: #fafafa;
+}
+
+.progress-bar {
+  width: 100%;
+  background: #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 10px;
+  margin: 10px 0;
+}
+
+.progress {
+  height: 10px;
+  background: #6c63ff;
+  transition: width 0.3s ease;
 }
 
 /* Keypad */
@@ -121,24 +148,27 @@ label {
 }
 
 .key, .submit-btn {
-  background: #6c63ff;
+  background: #6a85e5;
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 15px;
-  font-size: 18px;
+  border-radius: 50%;
+  padding: 20px;
+  font-size: 24px;
   font-weight: bold;
   cursor: pointer;
   text-align: center;
-  transition: background 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .key:hover, .submit-btn:hover {
-  background: #5348c7;
+  background: #3e3be3;
+  transform: scale(1.1);
 }
 
 .key:active, .submit-btn:active {
-  background: #3d3495;
+  background: #2d2aa7;
+  transform: scale(0.95);
 }
 
 .submit-btn {
@@ -146,7 +176,24 @@ label {
   margin-top: 10px;
 }
 
+/* Level-Up Message */
+.level-up-message {
+  font-size: 24px;
+  color: #ff7675;
+  text-align: center;
+  margin-top: 20px;
+  animation: fadeIn 0.5s ease;
+}
+
 .hidden {
   display: none;
 }
- 
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
