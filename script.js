@@ -6,17 +6,52 @@ let currentQuestion = {};
 let userInput = "";
 let selectedOperators = ['+', '-', 'x', '÷']; // Default: All operators enabled
 
+// Save progress to Local Storage
+function saveProgress() {
+  const progressData = {
+    score: score,
+    level: level,
+    questionCount: questionCount,
+  };
+  localStorage.setItem('mathAppProgress', JSON.stringify(progressData));
+}
+
+// Load progress from Local Storage
+function loadProgress() {
+  const savedProgress = localStorage.getItem('mathAppProgress');
+  if (savedProgress) {
+    const progressData = JSON.parse(savedProgress);
+    score = progressData.score;
+    level = progressData.level;
+    questionCount = progressData.questionCount;
+    updateScore();
+  } else {
+    resetProgress(); // Start fresh if no saved progress
+  }
+}
+
+// Reset progress
+function resetProgress() {
+  score = 0;
+  level = 1;
+  questionCount = 1;
+  localStorage.removeItem('mathAppProgress'); // Clear stored progress
+  alert('Progress has been reset!');
+  updateScore();
+  generateQuestion();
+}
+
 // Generate a random question
 function generateQuestion() {
   const operator = selectedOperators[Math.floor(Math.random() * selectedOperators.length)];
   let num1, num2, answer;
 
   if (operator === '÷') {
-    num2 = Math.floor(Math.random() * 9) + 1; // Avoid division by zero
+    num2 = Math.floor(Math.random() * 9) + 1;
     answer = Math.floor(Math.random() * 9) + 1;
-    num1 = num2 * answer; // Ensure num1 is divisible by num2
+    num1 = num2 * answer;
   } else {
-    num1 = Math.floor(Math.random() * 10 * level) + 1; // Increase number range with level
+    num1 = Math.floor(Math.random() * 10 * level) + 1;
     num2 = Math.floor(Math.random() * 10 * level) + 1;
 
     switch (operator) {
@@ -40,8 +75,7 @@ function updateDisplay() {
 
 // Check the user's answer
 function checkAnswer() {
-  const emoji = document.getElementById('emoji'); // Replace the image with emoji
-  const audio = new Audio();
+  const emoji = document.getElementById('emoji');
   const resultMessage = document.getElementById('user-input');
 
   if (parseInt(userInput) === currentQuestion.answer) {
@@ -49,15 +83,13 @@ function checkAnswer() {
     resultMessage.textContent = 'Correct!';
     resultMessage.style.color = 'green';
     emoji.textContent = '😄'; // Happy emoji
-    audio.src = './reactions/right.wav'; // Play "right" sound
   } else {
     resultMessage.textContent = 'Wrong!';
     resultMessage.style.color = 'red';
     emoji.textContent = '😢'; // Sad emoji
-    audio.src = './reactions/wrong.wav'; // Play "wrong" sound
   }
 
-  audio.play(); // Play the selected sound
+  saveProgress(); // Save progress after each answer
   setTimeout(() => {
     nextQuestion();
   }, 2000);
@@ -93,7 +125,7 @@ function updateScore() {
 // Toggle the settings panel
 function toggleSettings() {
   const panel = document.getElementById('settings-panel');
-  panel.classList.toggle('hidden'); // Show or hide the settings panel
+  panel.classList.toggle('hidden');
 }
 
 // Apply settings (update selected operators)
@@ -104,19 +136,8 @@ function applySettings() {
   if (document.getElementById('multiplication').checked) selectedOperators.push('x');
   if (document.getElementById('division').checked) selectedOperators.push('÷');
 
-  alert('Settings updated!'); // Notify the user
-  toggleSettings(); // Close the settings panel
-}
-
-// Reset progress
-function resetProgress() {
-  score = 0;
-  questionCount = 1;
-  level = 1;
-  alert('Progress has been reset!');
-  updateScore();
-  generateQuestion();
-  document.getElementById('emoji').textContent = '🙂'; // Reset to neutral face
+  alert('Settings updated!');
+  toggleSettings();
 }
 
 // Handle keypad button clicks
@@ -125,9 +146,9 @@ document.querySelectorAll('.key').forEach(key => {
     const value = this.textContent;
 
     if (value === '⌫') {
-      userInput = userInput.slice(0, -1); // Remove the last character
+      userInput = userInput.slice(0, -1);
     } else {
-      userInput += value; // Append the clicked value
+      userInput += value;
     }
 
     updateDisplay();
@@ -138,4 +159,5 @@ document.querySelectorAll('.key').forEach(key => {
 document.getElementById('submit-answer').addEventListener('click', checkAnswer);
 
 // Start the game
+loadProgress(); // Load progress on app start
 generateQuestion();

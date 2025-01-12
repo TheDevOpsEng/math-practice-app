@@ -8,15 +8,20 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  overflow: hidden; /* Prevent scrolling */
 }
 
 .app {
-  width: 400px;
+  width: 95%; /* Adjust for smaller screens */
+  max-width: 400px;
   background: #ffffff;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   padding-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Ensure buttons stay on-screen */
 }
 
 /* Header */
@@ -34,7 +39,7 @@ header {
   border: none;
   border-radius: 8px;
   padding: 8px 12px;
-  font-size: 16px;
+  font-size: 14px;
   color: white;
   cursor: pointer;
   transition: background 0.3s ease;
@@ -47,8 +52,8 @@ header {
 /* Settings Panel */
 #settings-panel {
   background: #eef2ff;
-  padding: 20px;
-  margin: 15px;
+  padding: 15px;
+  margin: 10px;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -56,11 +61,11 @@ header {
 #settings-panel h3 {
   margin: 0 0 10px;
   color: #4c4c6d;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 label {
-  font-size: 16px;
+  font-size: 14px;
   color: #4c4c6d;
 }
 
@@ -68,8 +73,8 @@ label {
   background: #6c63ff;
   color: white;
   border: none;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 8px 16px;
+  font-size: 14px;
   border-radius: 5px;
   margin-top: 10px;
   cursor: pointer;
@@ -82,13 +87,13 @@ label {
 /* Question Display */
 .question-display {
   text-align: center;
-  padding: 30px;
-  font-size: 28px;
+  padding: 20px;
+  font-size: 24px;
   font-weight: bold;
   color: #4c4c6d;
   background-color: #e8f0ff;
   border-radius: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -117,8 +122,8 @@ label {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px 20px;
-  font-size: 16px;
+  padding: 5px 15px;
+  font-size: 14px;
   font-weight: bold;
   color: #4c4c6d;
   background-color: #fafafa;
@@ -129,12 +134,12 @@ label {
   background: #e0e0e0;
   border-radius: 8px;
   overflow: hidden;
-  height: 10px;
-  margin: 10px 0;
+  height: 8px;
+  margin: 8px 0;
 }
 
 .progress {
-  height: 10px;
+  height: 8px;
   background: #6c63ff;
   transition: width 0.3s ease;
 }
@@ -143,8 +148,8 @@ label {
 .keypad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 20px;
+  gap: 8px;
+  padding: 10px;
 }
 
 .key, .submit-btn {
@@ -152,8 +157,8 @@ label {
   color: white;
   border: none;
   border-radius: 50%;
-  padding: 20px;
-  font-size: 24px;
+  padding: 15px;
+  font-size: 18px;
   font-weight: bold;
   cursor: pointer;
   text-align: center;
@@ -163,7 +168,7 @@ label {
 
 .key:hover, .submit-btn:hover {
   background: #3e3be3;
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .key:active, .submit-btn:active {
@@ -178,10 +183,10 @@ label {
 
 /* Level-Up Message */
 .level-up-message {
-  font-size: 24px;
+  font-size: 18px;
   color: #ff7675;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
   animation: fadeIn 0.5s ease;
 }
 
@@ -195,5 +200,48 @@ label {
   }
   to {
     opacity: 1;
+  }
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 600px) {
+  .app {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .question-display {
+    font-size: 20px;
+    padding: 15px;
+  }
+
+  .emoji {
+    font-size: 60px;
+  }
+
+  .keypad {
+    gap: 6px;
+  }
+
+  .key, .submit-btn {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .nav-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .score-info {
+    font-size: 12px;
+  }
+
+  .progress-bar {
+    height: 6px;
+  }
+
+  .progress {
+    height: 6px;
   }
 }
