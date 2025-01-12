@@ -21,6 +21,7 @@ body {
   background: #ffffff;
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Allow scrolling inside the app if necessary */
 }
 
 /* Header */
@@ -33,7 +34,7 @@ body {
 }
 
 .logo {
-  width: 50px;
+  width: 40px;
   height: auto;
 }
 
@@ -87,7 +88,7 @@ h1 {
 .keypad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  gap: 10px;
   margin-bottom: 15px;
 }
 
@@ -241,4 +242,54 @@ h1 {
 .label-text {
   font-size: 16px;
   color: #4c4c6d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app {
+    width: 95%;
+    padding: 10px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  .keypad {
+    gap: 8px;
+  }
+
+  .key, .submit-btn {
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .score-info {
+    font-size: 12px;
+  }
+
+  .tab-btn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    width: 30px;
+  }
+
+  .question-display {
+    font-size: 18px;
+    padding: 10px;
+  }
+
+  .key, .submit-btn {
+    padding: 8px;
+    font-size: 12px;
+  }
 }
