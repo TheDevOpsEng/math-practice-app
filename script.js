@@ -1,297 +1,155 @@
-/* General Styles */
-body {
-  font-family: 'Roboto', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, #f4f4f9, #dceefb);
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden; /* Prevent scrolling */
+let score = 0;
+let totalQuestions = 10;
+let questionCount = 1;
+let level = 1;
+let currentQuestion = {};
+let userInput = "";
+let selectedOperators = ['+', '-', 'x', '÷'];
+let soundEnabled = true;
+
+// Save progress to Local Storage
+function saveProgress() {
+  const progressData = { score, level, questionCount };
+  localStorage.setItem('mathAppProgress', JSON.stringify(progressData));
 }
 
-.app {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 15px;
-  max-width: 400px;
-  margin: auto;
-  background: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow-y: auto; /* Allow scrolling inside the app if necessary */
-}
-
-/* Header */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.logo {
-  width: 60px; /* Slightly increased logo size */
-  height: auto;
-}
-
-h1 {
-  font-size: 26px;
-  color: #4c4c6d;
-}
-
-/* Question Display */
-.question-display {
-  text-align: center;
-  padding: 15px;
-  font-size: 24px;
-  font-weight: bold;
-  color: #4c4c6d;
-  background-color: #e8f0ff;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.emoji {
-  font-size: 40px;
-  margin-bottom: 10px;
-}
-
-/* Score and Progress */
-.score-info {
-  text-align: center;
-  font-size: 14px;
-  color: #4c4c6d;
-  margin-bottom: 15px;
-}
-
-.progress-bar {
-  width: 100%;
-  background: #e0e0e0;
-  border-radius: 8px;
-  height: 8px;
-  margin: 5px 0;
-}
-
-.progress {
-  height: 8px;
-  background: linear-gradient(to right, #6c63ff, #42a5f5);
-  border-radius: 8px;
-  transition: width 0.3s ease;
-}
-
-/* Keypad */
-.keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 15px;
-}
-
-.key, .submit-btn {
-  background: #6a85e5;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  padding: 18px; /* Increased button padding slightly */
-  font-size: 22px; /* Increased font size for numbers */
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.key:hover, .submit-btn:hover {
-  background: #3e3be3;
-  transform: scale(1.05);
-}
-
-.key:active, .submit-btn:active {
-  background: #2d2aa7;
-  transform: scale(0.95);
-}
-
-.submit-btn {
-  grid-column: span 3;
-  padding: 20px; /* Slightly larger Submit button */
-  font-size: 22px; /* Match the font size to keys */
-}
-
-/* Tab Navigation */
-.tab-bar {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background: #6a85e5;
-  padding: 10px 0;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-}
-
-.tab-btn {
-  background: none;
-  border: none;
-  font-size: 16px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  padding: 10px 20px;
-  transition: background 0.3s ease;
-}
-
-.tab-btn:hover, .tab-btn:focus {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-}
-
-/* Hidden Tabs */
-.hidden {
-  display: none;
-}
-
-/* Settings Panel */
-.settings-panel {
-  padding: 20px;
-  background: #f9f9ff;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.settings-section {
-  margin-bottom: 20px;
-}
-
-.settings-section h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #4c4c6d;
-  font-weight: bold;
-}
-
-.settings-section label {
-  font-size: 16px;
-  color: #4c4c6d;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.settings-btn {
-  display: block;
-  width: 100%;
-  background: #6c63ff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
-  font-size: 16px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.settings-btn:hover {
-  background: #5348c7;
-}
-
-/* Toggle Switch for Sound */
-.toggle {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.toggle input {
-  display: none;
-}
-
-.slider {
-  width: 40px;
-  height: 20px;
-  background: #ccc;
-  border-radius: 20px;
-  position: relative;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.slider::before {
-  content: "";
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background: white;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.3s;
-}
-
-.toggle input:checked + .slider {
-  background: #6c63ff;
-}
-
-.toggle input:checked + .slider::before {
-  transform: translateX(20px);
-}
-
-.label-text {
-  font-size: 16px;
-  color: #4c4c6d;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .app {
-    width: 95%;
-    padding: 10px;
-  }
-
-  .header {
-    flex-direction: column;
-  }
-
-  h1 {
-    font-size: 22px;
-  }
-
-  .keypad {
-    gap: 10px;
-  }
-
-  .key, .submit-btn {
-    padding: 16px; /* Adjusted size for mobile */
-    font-size: 20px;
-  }
-
-  .score-info {
-    font-size: 12px;
-  }
-
-  .tab-btn {
-    font-size: 14px;
-    padding: 8px 16px;
+// Load progress from Local Storage
+function loadProgress() {
+  const savedProgress = localStorage.getItem('mathAppProgress');
+  if (savedProgress) {
+    const { score: savedScore, level: savedLevel, questionCount: savedQuestionCount } = JSON.parse(savedProgress);
+    score = savedScore;
+    level = savedLevel;
+    questionCount = savedQuestionCount;
+    updateScore();
   }
 }
 
-@media (max-width: 480px) {
-  .logo {
-    width: 70px;
-  }
-
-  .question-display {
-    font-size: 18px;
-    padding: 10px;
-  }
-
-  .key, .submit-btn {
-    padding: 14px;
-    font-size: 18px;
+// Reset progress function
+function resetProgress() {
+  if (confirm('Are you sure you want to reset your progress?')) {
+    localStorage.removeItem('mathAppProgress');
+    alert('Progress has been reset!');
+    location.reload();
   }
 }
+
+// Generate a random question
+function generateQuestion() {
+  const operator = selectedOperators[Math.floor(Math.random() * selectedOperators.length)];
+  let num1, num2, answer;
+
+  if (operator === '÷') {
+    num2 = Math.floor(Math.random() * 9) + 1;
+    answer = Math.floor(Math.random() * 9) + 1;
+    num1 = num2 * answer;
+  } else {
+    num1 = Math.floor(Math.random() * 10 * level) + 1;
+    num2 = Math.floor(Math.random() * 10 * level) + 1;
+
+    switch (operator) {
+      case '+': answer = num1 + num2; break;
+      case '-': answer = num1 - num2; break;
+      case 'x': answer = num1 * num2; break;
+    }
+  }
+
+  currentQuestion = { num1, num2, operator, answer };
+  document.getElementById('question').textContent = `${num1} ${operator} ${num2}`;
+  userInput = "";
+  updateDisplay();
+}
+
+// Update the user input display
+function updateDisplay() {
+  document.getElementById('user-input').textContent = userInput || "_";
+}
+
+// Check the user's answer
+function checkAnswer() {
+  const emoji = document.getElementById('emoji');
+  const resultMessage = document.getElementById('user-input');
+  const audio = new Audio();
+
+  if (parseInt(userInput) === currentQuestion.answer) {
+    score++;
+    resultMessage.textContent = 'Correct!';
+    resultMessage.style.color = 'green';
+    emoji.textContent = '😄';
+    if (soundEnabled) audio.src = './sounds/right.wav';
+  } else {
+    resultMessage.textContent = 'Wrong!';
+    resultMessage.style.color = 'red';
+    emoji.textContent = '😢';
+    if (soundEnabled) audio.src = './sounds/wrong.wav';
+  }
+
+  if (soundEnabled) audio.play().catch(error => console.error("Audio playback error:", error));
+  saveProgress();
+  setTimeout(() => nextQuestion(), 2000);
+}
+
+// Move to the next question
+function nextQuestion() {
+  if (questionCount >= totalQuestions) {
+    levelUp();
+  } else {
+    questionCount++;
+    generateQuestion();
+    updateScore();
+    document.getElementById('emoji').textContent = '🙂';
+  }
+}
+
+// Level up
+function levelUp() {
+  level++;
+  questionCount = 1;
+  alert(`Great job! You've advanced to Level ${level}!`);
+  generateQuestion();
+  updateScore();
+}
+
+// Update the score display
+function updateScore() {
+  document.getElementById('progress').textContent = `Level ${level} | Question ${questionCount} of ${totalQuestions}`;
+  document.getElementById('score').textContent = `Score: ${score}`;
+}
+
+// Show specific tab by toggling the 'hidden' class
+function showTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden')); // Hide all tabs
+  document.getElementById(tabId).classList.remove('hidden'); // Show the selected tab
+}
+
+// Apply settings
+function applySettings() {
+  selectedOperators = [];
+  if (document.getElementById('addition').checked) selectedOperators.push('+');
+  if (document.getElementById('subtraction').checked) selectedOperators.push('-');
+  if (document.getElementById('multiplication').checked) selectedOperators.push('x');
+  if (document.getElementById('division').checked) selectedOperators.push('÷');
+  soundEnabled = document.getElementById('sound').checked;
+
+  alert('Settings updated!');
+}
+
+// Handle keypad button clicks
+document.querySelectorAll('.key').forEach(key => {
+  key.addEventListener('click', () => {
+    const value = key.textContent;
+    if (value === '⌫') {
+      userInput = userInput.slice(0, -1);
+    } else {
+      userInput += value;
+    }
+    updateDisplay();
+  });
+});
+
+// Add event listener for the Submit Answer button
+document.getElementById('submit-answer').addEventListener('click', checkAnswer);
+
+// Start the game
+loadProgress();
+generateQuestion();
