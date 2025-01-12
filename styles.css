@@ -7,7 +7,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: hidden; /* Prevent scrolling */
+  overflow: hidden;
 }
 
 .app {
@@ -21,7 +21,7 @@ body {
   background: #ffffff;
   border-radius: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  overflow-y: auto; /* Allow scrolling inside the app if necessary */
+  overflow-y: auto;
 }
 
 /* Header */
@@ -34,7 +34,7 @@ body {
 }
 
 .logo {
-  width: 40px;
+  width: 80px; /* Doubled the logo size */
   height: auto;
 }
 
@@ -88,7 +88,7 @@ h1 {
 .keypad {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 15px;
   margin-bottom: 15px;
 }
 
@@ -97,8 +97,8 @@ h1 {
   color: white;
   border: none;
   border-radius: 50%;
-  padding: 12px;
-  font-size: 16px;
+  padding: 18px; /* Increased button padding for larger size */
+  font-size: 20px; /* Increased font size for numbers on buttons */
   font-weight: bold;
   cursor: pointer;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -118,6 +118,7 @@ h1 {
 
 .submit-btn {
   grid-column: span 3;
+  padding: 20px; /* Increased size of the Submit button */
 }
 
 /* Tab Navigation */
@@ -260,12 +261,12 @@ h1 {
   }
 
   .keypad {
-    gap: 8px;
+    gap: 12px; /* Slightly smaller gap on mobile */
   }
 
   .key, .submit-btn {
-    padding: 10px;
-    font-size: 14px;
+    padding: 16px; /* Slightly smaller button padding for mobile */
+    font-size: 18px; /* Adjusted font size */
   }
 
   .score-info {
@@ -280,7 +281,7 @@ h1 {
 
 @media (max-width: 480px) {
   .logo {
-    width: 30px;
+    width: 70px; /* Slightly smaller logo on very small screens */
   }
 
   .question-display {
@@ -289,7 +290,7 @@ h1 {
   }
 
   .key, .submit-btn {
-    padding: 8px;
-    font-size: 12px;
+    padding: 14px;
+    font-size: 16px;
   }
 }
