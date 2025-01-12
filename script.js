@@ -1,18 +1,15 @@
 let score = 0;
-let totalQuestions = 10; // Number of questions per level
+let totalQuestions = 10;
 let questionCount = 1;
-let level = 1; // Start from level 1
+let level = 1;
 let currentQuestion = {};
 let userInput = "";
-let selectedOperators = ['+', '-', 'x', '÷']; // Default: All operators enabled
+let selectedOperators = ['+', '-', 'x', '÷'];
+let soundEnabled = true;
 
 // Save progress to Local Storage
 function saveProgress() {
-  const progressData = {
-    score: score,
-    level: level,
-    questionCount: questionCount,
-  };
+  const progressData = { score, level, questionCount };
   localStorage.setItem('mathAppProgress', JSON.stringify(progressData));
 }
 
@@ -20,25 +17,21 @@ function saveProgress() {
 function loadProgress() {
   const savedProgress = localStorage.getItem('mathAppProgress');
   if (savedProgress) {
-    const progressData = JSON.parse(savedProgress);
-    score = progressData.score;
-    level = progressData.level;
-    questionCount = progressData.questionCount;
+    const { score: savedScore, level: savedLevel, questionCount: savedQuestionCount } = JSON.parse(savedProgress);
+    score = savedScore;
+    level = savedLevel;
+    questionCount = savedQuestionCount;
     updateScore();
-  } else {
-    resetProgress(); // Start fresh if no saved progress
   }
 }
 
-// Reset progress
+// Reset progress function
 function resetProgress() {
-  score = 0;
-  level = 1;
-  questionCount = 1;
-  localStorage.removeItem('mathAppProgress'); // Clear stored progress
-  alert('Progress has been reset!');
-  updateScore();
-  generateQuestion();
+  if (confirm('Are you sure you want to reset your progress?')) {
+    localStorage.removeItem('mathAppProgress');
+    alert('Progress has been reset!');
+    location.reload();
+  }
 }
 
 // Generate a random question
@@ -69,35 +62,31 @@ function generateQuestion() {
 
 // Update the user input display
 function updateDisplay() {
-  const display = document.getElementById('user-input');
-  display.textContent = userInput || "_";
+  document.getElementById('user-input').textContent = userInput || "_";
 }
 
 // Check the user's answer
 function checkAnswer() {
   const emoji = document.getElementById('emoji');
   const resultMessage = document.getElementById('user-input');
-  const audio = new Audio(); // Create a new Audio object
+  const audio = new Audio();
 
   if (parseInt(userInput) === currentQuestion.answer) {
     score++;
     resultMessage.textContent = 'Correct!';
     resultMessage.style.color = 'green';
-    emoji.textContent = '😄'; // Happy emoji
-    audio.src = './sounds/right.wav'; // Path to correct answer sound
+    emoji.textContent = '😄';
+    if (soundEnabled) audio.src = './sounds/right.wav';
   } else {
     resultMessage.textContent = 'Wrong!';
     resultMessage.style.color = 'red';
-    emoji.textContent = '😢'; // Sad emoji
-    audio.src = './sounds/wrong.wav'; // Path to wrong answer sound
+    emoji.textContent = '😢';
+    if (soundEnabled) audio.src = './sounds/wrong.wav';
   }
 
-  audio.play().catch(error => console.error("Audio playback error:", error)); // Play the sound and handle errors
-
-  saveProgress(); // Save progress after each answer
-  setTimeout(() => {
-    nextQuestion();
-  }, 2000);
+  if (soundEnabled) audio.play().catch(error => console.error("Audio playback error:", error));
+  saveProgress();
+  setTimeout(() => nextQuestion(), 2000);
 }
 
 // Move to the next question
@@ -108,14 +97,14 @@ function nextQuestion() {
     questionCount++;
     generateQuestion();
     updateScore();
-    document.getElementById('emoji').textContent = '🙂'; // Reset to neutral face
+    document.getElementById('emoji').textContent = '🙂';
   }
 }
 
 // Level up
 function levelUp() {
   level++;
-  questionCount = 1; // Reset question count
+  questionCount = 1;
   alert(`Great job! You've advanced to Level ${level}!`);
   generateQuestion();
   updateScore();
@@ -127,35 +116,33 @@ function updateScore() {
   document.getElementById('score').textContent = `Score: ${score}`;
 }
 
-// Toggle the settings panel
-function toggleSettings() {
-  const panel = document.getElementById('settings-panel');
-  panel.classList.toggle('hidden');
+// Show specific tab by toggling the 'hidden' class
+function showTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden')); // Hide all tabs
+  document.getElementById(tabId).classList.remove('hidden'); // Show the selected tab
 }
 
-// Apply settings (update selected operators)
+// Apply settings
 function applySettings() {
   selectedOperators = [];
   if (document.getElementById('addition').checked) selectedOperators.push('+');
   if (document.getElementById('subtraction').checked) selectedOperators.push('-');
   if (document.getElementById('multiplication').checked) selectedOperators.push('x');
   if (document.getElementById('division').checked) selectedOperators.push('÷');
+  soundEnabled = document.getElementById('sound').checked;
 
   alert('Settings updated!');
-  toggleSettings();
 }
 
 // Handle keypad button clicks
 document.querySelectorAll('.key').forEach(key => {
-  key.addEventListener('click', function () {
-    const value = this.textContent;
-
+  key.addEventListener('click', () => {
+    const value = key.textContent;
     if (value === '⌫') {
       userInput = userInput.slice(0, -1);
     } else {
       userInput += value;
     }
-
     updateDisplay();
   });
 });
@@ -164,5 +151,5 @@ document.querySelectorAll('.key').forEach(key => {
 document.getElementById('submit-answer').addEventListener('click', checkAnswer);
 
 // Start the game
-loadProgress(); // Load progress on app start
+loadProgress();
 generateQuestion();
