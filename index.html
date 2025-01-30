@@ -1,99 +1,235 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Math Skill Builder</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Math Practice</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background: white;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .timer, .streak {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .history {
+            font-size: 16px;
+            margin-top: 15px;
+            color: #555;
+        }
+
+        .question-item {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        input {
+            font-size: 18px;
+            padding: 8px;
+            width: 80px;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #007bff;
+        }
+
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            background: #007bff;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .result {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .reward {
+            font-size: 24px;
+            color: #ff9800;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="app">
-    <!-- Game Screen -->
-    <div id="game-screen" class="tab-content">
-      <header class="header">
-        <img src="assets/logo.png" alt="Math Skill Builder Logo" class="logo">
-        <h1>Math Skill Builder</h1>
-      </header>
 
-      <div class="question-display">
-        <div id="emoji" class="emoji">🙂</div>
-        <div id="question">7 - 3</div>
-        <div id="user-input">_</div>
-      </div>
-
-      <div class="score-info">
-        <span id="progress">Level 1 | Question 2 of 10</span>
-        <div class="progress-bar">
-          <div class="progress" style="width: 20%;"></div>
-        </div>
-        <span id="score">Score: 1</span>
-      </div>
-
-      <div class="keypad">
-        <button class="key">1</button>
-        <button class="key">2</button>
-        <button class="key">3</button>
-        <button class="key">4</button>
-        <button class="key">5</button>
-        <button class="key">6</button>
-        <button class="key">7</button>
-        <button class="key">8</button>
-        <button class="key">9</button>
-        <button class="key">-</button>
-        <button class="key">0</button>
-        <button class="key" id="delete">⌫</button>
-      </div>
-
-      <div class="submit-section">
-        <button id="submit-answer" class="submit-btn">Submit Answer</button>
-      </div>
+    <div class="container">
+        <h1>🎯 Fun Math Practice 🏆</h1>
+        <div class="timer" id="timer">⏳ Time: 0s</div>
+        <div class="streak" id="streak">🔥 Streak: 0</div>
+        <div id="questions-container"></div>
+        <button onclick="checkAnswers()">Check Answers</button>
+        <button onclick="nextQuestions()" disabled id="next-btn">Next 10 Questions</button>
+        <div class="reward" id="reward-message"></div>
+        <div class="history" id="history">📜 History: No records yet</div>
     </div>
 
-    <!-- Settings Screen -->
-    <div id="settings-screen" class="tab-content hidden">
-      <header>
-        <h1>Settings</h1>
-      </header>
+    <script>
+        let level = localStorage.getItem("mathLevel") ? parseInt(localStorage.getItem("mathLevel")) : 1;
+        let step = localStorage.getItem("mathStep") ? parseInt(localStorage.getItem("mathStep")) : 1;
+        let correctStreak = localStorage.getItem("streak") ? parseInt(localStorage.getItem("streak")) : 0;
+        let questions = [];
+        let startTime;
+        let timerInterval;
+        let timerStarted = false;
+        let practiceCount = localStorage.getItem("practiceCount") ? parseInt(localStorage.getItem("practiceCount")) : 0;
+        let history = JSON.parse(localStorage.getItem("mathHistory")) || [];
 
-      <div class="settings-panel">
-        <div class="settings-section">
-          <h3>Game Settings</h3>
-          <label><input type="checkbox" id="addition" checked> Addition (+)</label>
-          <label><input type="checkbox" id="subtraction" checked> Subtraction (−)</label>
-          <label><input type="checkbox" id="multiplication" checked> Multiplication (×)</label>
-          <label><input type="checkbox" id="division" checked> Division (÷)</label>
-        </div>
+        function generateQuestions() {
+            let container = document.getElementById("questions-container");
+            container.innerHTML = "";
+            questions = [];
+            timerStarted = false;
 
-        <div class="settings-section">
-          <h3>Sound</h3>
-          <label class="toggle">
-            <input type="checkbox" id="sound" checked>
-            <span class="slider"></span>
-            <span class="label-text">Enable Sounds</span>
-          </label>
-        </div>
+            for (let i = 1; i <= 10; i++) {
+                let num1 = level;
+                let num2 = step;
+                let questionText = `${num1} + ${num2} =`;
+                let answer = num1 + num2;
 
-        <div class="settings-section">
-          <h3>User Data</h3>
-          <button class="settings-btn" onclick="resetProgress()">Reset Progress</button>
-        </div>
+                questions.push({ questionText, answer });
 
-        <div class="settings-section">
-          <h3>Developers</h3>
-          <button class="settings-btn">Contact Us</button>
-          <button class="settings-btn">Rate the App</button>
-        </div>
-      </div>
-    </div>
-  </div>
+                container.innerHTML += `
+                    <div class="question-item">
+                        ${questionText}
+                        <input type="number" id="answer-${i}" oninput="startTimer()" inputmode="numeric" pattern="[0-9]*">
+                        <span class="result" id="result-${i}"></span>
+                    </div>
+                `;
 
-  <!-- Tab Navigation -->
-  <nav class="tab-bar">
-    <button class="tab-btn" onclick="showTab('game-screen')">🏠 Game</button>
-    <button class="tab-btn" onclick="showTab('settings-screen')">⚙ Settings</button>
-  </nav>
+                step++;
+                if (step > 9) {
+                    level++;
+                    step = 1;
+                }
+            }
 
-  <script src="script.js"></script>
+            document.getElementById("timer").textContent = "⏳ Time: 0s";
+            clearInterval(timerInterval);
+            updateHistoryDisplay();
+            document.getElementById("reward-message").textContent = "";
+        }
+
+        function startTimer() {
+            if (!timerStarted) {
+                timerStarted = true;
+                startTime = Date.now();
+                timerInterval = setInterval(() => {
+                    let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                    document.getElementById("timer").textContent = `⏳ Time: ${elapsedTime}s`;
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function checkAnswers() {
+            let allCorrect = true;
+
+            for (let i = 1; i <= 10; i++) {
+                let userAnswer = document.getElementById(`answer-${i}`).value;
+                let resultSpan = document.getElementById(`result-${i}`);
+                let correctAnswer = questions[i - 1].answer;
+
+                if (parseInt(userAnswer) === correctAnswer) {
+                    resultSpan.innerHTML = "✅ Correct!";
+                    resultSpan.style.color = "green";
+                } else {
+                    resultSpan.innerHTML = `❌ Wrong! (${correctAnswer})`;
+                    resultSpan.style.color = "red";
+                    allCorrect = false;
+                }
+            }
+
+            stopTimer();
+
+            let elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            history.push(`Level ${level}: ${elapsedTime}s`);
+            localStorage.setItem("mathHistory", JSON.stringify(history));
+
+            if (allCorrect) {
+                correctStreak++;
+                practiceCount++;
+                if (practiceCount >= 5) {
+                    level++;
+                    practiceCount = 0;
+                    document.getElementById("reward-message").textContent = "🎉 Level Up! Great Job! 🎊";
+                } else {
+                    document.getElementById("reward-message").textContent = "⭐ Keep Going! ⭐";
+                }
+                document.getElementById("next-btn").disabled = false;
+            } else {
+                correctStreak = 0;
+            }
+
+            localStorage.setItem("mathLevel", level);
+            localStorage.setItem("practiceCount", practiceCount);
+            localStorage.setItem("streak", correctStreak);
+            document.getElementById("streak").textContent = `🔥 Streak: ${correctStreak}`;
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            let historyContainer = document.getElementById("history");
+            historyContainer.innerHTML = "📜 History:<br>" + history.slice(-5).join("<br>");
+        }
+
+        function nextQuestions() {
+            generateQuestions();
+            document.getElementById("next-btn").disabled = true;
+        }
+
+        generateQuestions();
+    </script>
+
 </body>
 </html>
